@@ -1,0 +1,81 @@
+{% extends "index.html" %}
+
+{% block content %}
+<header>
+    <h1>System Audit Log</h1>
+    <p>Track all administrative actions and security events.</p>
+</header>
+
+<div class="card" style="width: 100%; overflow-x: auto;">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Action</th>
+                <th>Performed By</th>
+                <th>IP Address</th>
+                <th>Employee (PIDM)</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td style="white-space: nowrap; color: var(--text-secondary); font-size: 0.9em;">
+                    {{ log.GURUAUD_ACTIVITY_DATE }}
+                </td>
+                <td>
+                    <span class="badge {{ 'success' if 'HIRE' in log.GURUAUD_ACTION else 'info' }}">
+                        {{ log.GURUAUD_ACTION }}
+                    </span>
+                </td>
+                <td style="font-weight: 600;">{{ log.GURUAUD_USER }}</td>
+                <td style="font-family: monospace; font-size: 0.85em; color: var(--text-secondary);">{{ log.GURUAUD_IP
+                    if log.GURUAUD_IP else '-' }}</td>
+                <td>
+                    {% if log.GURUAUD_PIDM %}
+                    {{ log.SPRIDEN_FIRST_NAME }} {{ log.SPRIDEN_LAST_NAME }}
+                    <span style="color: var(--text-secondary); font-size: 0.85em;">(#{{ log.GURUAUD_PIDM }})</span>
+                    {% else %}
+                    -
+                    {% endif %}
+                </td>
+                <td style="font-size: 0.9em;">{{ log.GURUAUD_DETAILS }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .badge {
+        padding: 4px 8px;
+        font-size: 0.75em;
+        font-weight: 700;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .badge.success {
+        background-color: var(--gmu-green);
+    }
+
+    .badge.info {
+        background-color: #475569;
+    }
+</style>
+{% endblock %}

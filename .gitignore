@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+vpython/
+.venv/
+env/
+venv/
+ENV/
+
+# Database
+mock_banner.db
+mock_banner.db-journal
+
+# Logs
+*.log
+server_error.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific
+uploads/
+check_schema.py

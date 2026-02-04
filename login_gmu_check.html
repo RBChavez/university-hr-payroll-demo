@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Banner HR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gmu-green: #005239;
+            --gmu-gold: #FFC733;
+            --primary: var(--gmu-green);
+            --primary-hover: #006b4a;
+            --accent: var(--gmu-gold);
+            --accent-hover: #ffd666;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 50px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-area h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to right, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-area p {
+            color: #94a3b8;
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: var(--gmu-green);
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(255, 199, 51, 0.3);
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Decorative background elements */
+        .blob {
+            position: absolute;
+            z-index: -1;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(to right, var(--gmu-green), #037c56);
+            filter: blur(100px);
+            opacity: 0.3;
+            border-radius: 50%;
+        }
+
+        .blob-1 {
+            top: -100px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            bottom: -100px;
+            left: -100px;
+        }
+
+        /* Comic Style Speech Bubble */
+        .guide-bubble {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: white;
+            color: #0f172a;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 3px solid #fbbf24;
+            max-width: 200px;
+            animation: bounce 2s infinite;
+        }
+
+        .guide-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 20px;
+            border-width: 15px 15px 0 0;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        .guide-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: 17px;
+            border-width: 18px 18px 0 0;
+            border-style: solid;
+            border-color: #fbbf24 transparent transparent transparent;
+            z-index: -1;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .guide-bubble span {
+            display: block;
+            margin-top: 5px;
+            color: var(--primary);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .login-footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.8em;
+            line-height: 1.6;
+        }
+
+        .login-footer a {
+            color: #818cf8;
+            text-decoration: none;
+        }
+
+        /* 2FA Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .modal-content p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .modal-step {
+            display: none;
+        }
+
+        .modal-step.active {
+            display: block;
+        }
+
+        .btn-modal {
+            width: 100%;
+            padding: 14px;
+            background: var(--gmu-green);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-modal:hover {
+            background: #006b4a;
+        }
+
+        .input-code {
+            letter-spacing: 0.5em;
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="guide-bubble">
+        User Guide:
+        <span>User: aomchavez</span>
+        <span>Pass: admin</span>
+        <span>Code: 123456</span>
+    </div>
+
+    <div class="login-card">
+        <div class="logo-area">
+            <h1>BANNER (DEMO)</h1>
+            <p>HR & Payroll Portal</p>
+        </div>
+
+        
+
+        <form id="loginForm" method="POST" action="/login" onsubmit="handleLoginSubmit(event)">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login">LOGIN TO PORTAL</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+            <a href="#"
+                style="color: #64748b; text-decoration: none; font-size: 0.85em; cursor: not-allowed; opacity: 0.6;">Forgot
+                password?</a>
+            <a href="#"
+                style="color: #64748b; text-decoration: none; font-size: 0.85em; cursor: not-allowed; opacity: 0.6;">Create
+                new account</a>
+        </div>
+
+        <div class="login-footer">
+            <p>This is a HR system by Rattanaphan Aom Chavez</p>
+        </div>
+        <div class="modal-overlay" id="tfaModal">
+            <div class="modal-content">
+                <!-- Step 1: Send Code -->
+                <div id="step1" class="modal-step active">
+                    <h2>Verify Identity</h2>
+                    <p>We'll send a verification code to your registered email or phone number.</p>
+                    <div class="form-group">
+                        <input type="text" id="contactInput" placeholder="Email or Phone number" required>
+                    </div>
+                    <button type="button" class="btn-modal" onclick="showStep2()">Send the code</button>
+                </div>
+
+                <!-- Step 2: Enter Code -->
+                <div id="step2" class="modal-step">
+                    <h2>Security Check</h2>
+                    <p>Please enter the 6-digit code sent to your device.</p>
+                    <div class="form-group">
+                        <input type="text" id="codeInput" class="input-code" placeholder="••••••" maxlength="6">
+                    </div>
+                    <button type="button" class="btn-modal" onclick="verifyTFA()">Submit & Login</button>
+                    <button type="button"
+                        style="background:none; border:none; color:#64748b; margin-top:15px; cursor:pointer; font-size:0.8em;"
+                        onclick="closeModal()">Back to Login</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const loginForm = document.getElementById('loginForm');
+
+            function handleLoginSubmit(event) {
+                event.preventDefault();
+                // In a real app, we'd verify crendentials via fetch first.
+                // For this demo, we assume creds are correct if they match the guide.
+                const user = loginForm.username.value;
+                const pass = loginForm.password.value;
+
+                if (user === 'aomchavez' && pass === 'admin') {
+                    document.getElementById('tfaModal').style.display = 'flex';
+                } else {
+                    loginForm.submit(); // Let server handle error
+                }
+            }
+
+            function showStep2() {
+                const contact = document.getElementById('contactInput').value;
+                if (!contact) {
+                    alert('Please enter your email or phone.');
+                    return;
+                }
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+            }
+
+            function verifyTFA() {
+                const code = document.getElementById('codeInput').value;
+                if (code === '123456') {
+                    loginForm.submit(); // Final submission
+                } else {
+                    alert('Invalid verification code. Please try 123456.');
+                }
+            }
+
+            function closeModal() {
+                document.getElementById('tfaModal').style.display = 'none';
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('step2').classList.remove('active');
+            }
+        </script>
+</body>
+
+</html>

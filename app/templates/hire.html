@@ -1,0 +1,371 @@
+{% extends "index.html" %}
+
+{% block content %}
+<header>
+    <h1>New Hire Onboarding</h1>
+    <p>Enter valid employee and position details to create a record in Banner.</p>
+</header>
+
+<div class="card">
+    <div id="message" class="alert"></div>
+
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #ffffff !important;
+            padding: 30px;
+            border-radius: 0 !important;
+            width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ddd;
+            color: var(--text-color);
+        }
+
+        .existing-list {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 0;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            border: 1px solid #eee;
+        }
+
+        .existing-item {
+            display: inline-block;
+            background: #eee;
+            padding: 2px 8px;
+            border-radius: 0;
+            margin: 2px;
+            color: var(--text-color);
+        }
+    </style>
+
+    <div id="fieldModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle">Add New Option</h3>
+            <div class="form-group">
+                <label id="modalLabel">New Value</label>
+                <input type="text" id="newFieldInput" placeholder="Enter value..." style="text-transform: uppercase;">
+            </div>
+
+            <div id="existingContainer" style="margin-top: 20px;">
+                <label style="font-size: 0.85em; opacity: 0.8;">Already Existing Values:</label>
+                <div id="existingValuesList" class="existing-list"></div>
+            </div>
+
+            <!-- Pay Band Only Fields -->
+            <div id="payBandFields" style="display: none; margin-top: 15px;">
+                <div class="form-group">
+                    <label>Minimum Salary Rate</label>
+                    <input type="number" id="minRateInput" placeholder="e.g. 50000">
+                </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Maximum Salary Rate</label>
+                    <input type="number" id="maxRateInput" placeholder="e.g. 80000">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn-primary" onclick="addNewFieldOption()">ADD</button>
+                <button type="button" class="btn-secondary" onclick="closeFieldModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <form id="hireForm">
+        <h3>Personal Details (SPRIDEN)</h3>
+        <div class="form-group">
+            <label>Banner ID</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="bannerId" name="banner_id" placeholder="99900000X" required>
+                <button type="button" class="btn-secondary" onclick="generateId()" style="white-space: nowrap;">Generate
+                    New</button>
+            </div>
+        </div>
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>First Name</label>
+                <input type="text" name="first_name" required>
+            </div>
+            <div>
+                <label>Last Name</label>
+                <input type="text" name="last_name" required>
+            </div>
+        </div>
+
+        <h3>Employment Details (PEBEMPL)</h3>
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Employee Class</label>
+                <select name="ecls" id="eclsSelect" onchange="checkDynamicSelection(this, 'Employee Class')">
+                    {% for code in ecls_codes %}
+                    <option value="{{ code }}">{{ code }}</option>
+                    {% endfor %}
+                    <option value="NEW">Add New...</option>
+                </select>
+            </div>
+            <div>
+                <label>Home Org</label>
+                <input type="text" name="orgn" placeholder="e.g. IT001" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <label>Hire Date</label>
+                <input type="date" name="hire_date" required>
+            </div>
+        </div>
+
+        <h3>Job Assignment (NBRJOBS)</h3>
+        <div class="form-group">
+            <label>Position Number</label>
+            <input type="text" name="position" placeholder="P00XXX" required>
+        </div>
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Job Title</label>
+                <input type="text" name="job_title" required>
+            </div>
+            <div>
+                <label>Annual Salary</label>
+                <input type="number" name="salary" required>
+            </div>
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Classification</label>
+                <select name="classification" id="classificationSelect"
+                    onchange="checkDynamicSelection(this, 'Classification')">
+                    {% for val in classifications %}
+                    <option value="{{ val }}">{{ val }}</option>
+                    {% endfor %}
+                    <option value="NEW">Add New...</option>
+                </select>
+            </div>
+            <div>
+                <label>Job Category</label>
+                <select name="category" id="categorySelect" onchange="checkDynamicSelection(this, 'Job Category')">
+                    {% for val in categories %}
+                    <option value="{{ val }}">{{ val }}</option>
+                    {% endfor %}
+                    <option value="NEW">Add New...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Job Type</label>
+                <select name="job_type">
+                    <option value="Full-Time">Full-Time</option>
+                    <option value="Part-Time">Part-Time</option>
+                </select>
+            </div>
+            <div>
+                <label>Location</label>
+                <select name="location" id="locationSelect" onchange="checkDynamicSelection(this, 'Location')">
+                    {% for val in locations %}
+                    <option value="{{ val }}">{{ val }}</option>
+                    {% endfor %}
+                    <option value="NEW">Add New...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Workplace Type</label>
+                <select name="workplace">
+                    <option value="Remote">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="On-Site">On-Site</option>
+                </select>
+            </div>
+            <div>
+                <label>Pay Band</label>
+                <select name="pay_band" id="pay_bandSelect" onchange="checkDynamicSelection(this, 'Pay Band')">
+                    {% for pb in pay_bands %}
+                    <option value="{{ pb.code }}">{{ pb.code }}</option>
+                    {% endfor %}
+                    <option value="NEW">Add New...</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Process New Hire</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', generateId);
+
+    function generateId() {
+        const randomDigs = Math.floor(Math.random() * 900000) + 100000;
+        document.getElementById('bannerId').value = '999' + randomDigs;
+    }
+
+    let currentFieldTarget = null;
+    let fieldPreviousValues = {};
+    let payBandData = {
+        {% for pb in pay_bands %}
+    "{{ pb.code }}": { min: {{ pb.min }}, max: {{ pb.max }} },
+    {% endfor %}
+    };
+
+    // Initialize previous values for all dynamic selects
+    document.querySelectorAll('select').forEach(s => {
+        if (s.id) fieldPreviousValues[s.id] = s.value;
+    });
+
+    function checkDynamicSelection(select, fieldDisplayName) {
+        if (select.value === 'NEW') {
+            currentFieldTarget = select;
+            document.getElementById('modalTitle').innerText = `Add New ${fieldDisplayName}`;
+            document.getElementById('modalLabel').innerText = `${fieldDisplayName} Value`;
+
+            // Populate existing values
+            const listDiv = document.getElementById('existingValuesList');
+            listDiv.innerHTML = '';
+            const isPayBand = fieldDisplayName === 'Pay Band';
+
+            Array.from(select.options).forEach(opt => {
+                if (opt.value && opt.value !== 'NEW') {
+                    const span = document.createElement('span');
+                    span.className = 'existing-item';
+
+                    let displayText = opt.text;
+                    if (isPayBand && payBandData[opt.value]) {
+                        const rates = payBandData[opt.value];
+                        displayText += `: $${rates.min.toLocaleString()} - $${rates.max.toLocaleString()}`;
+                        span.style.display = 'block'; // List Pay Bands on new lines for readability
+                    }
+
+                    span.innerText = displayText;
+                    listDiv.appendChild(span);
+                }
+            });
+
+            // Show/Hide Pay Band Fields
+            document.getElementById('payBandFields').style.display = isPayBand ? 'block' : 'none';
+
+            document.getElementById('fieldModal').style.display = 'flex';
+        } else {
+            fieldPreviousValues[select.id] = select.value;
+        }
+    }
+
+    function closeFieldModal() {
+        document.getElementById('fieldModal').style.display = 'none';
+        if (currentFieldTarget) {
+            currentFieldTarget.value = fieldPreviousValues[currentFieldTarget.id];
+        }
+        document.getElementById('newFieldInput').value = '';
+        document.getElementById('minRateInput').value = '';
+        document.getElementById('maxRateInput').value = '';
+    }
+
+    async function addNewFieldOption() {
+        const input = document.getElementById('newFieldInput');
+        const code = input.value.trim();
+        if (!code) {
+            alert('Please enter a value.');
+            return;
+        }
+
+        const select = currentFieldTarget;
+
+        // Duplicate Check
+        const exists = Array.from(select.options).some(opt => opt.value.toUpperCase() === code.toUpperCase());
+        if (exists) {
+            alert(`The value "${code}" already exists.`);
+            return;
+        }
+
+        const isPayBand = currentFieldTarget.id === 'pay_bandSelect';
+        if (isPayBand) {
+            const min = document.getElementById('minRateInput').value;
+            const max = document.getElementById('maxRateInput').value;
+            if (!min || !max) {
+                alert('Please enter both Minimum and Maximum rates.');
+                return;
+            }
+
+            // Persist to DB first
+            const response = await fetch('/api/paybands', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code, min: parseInt(min), max: parseInt(max) })
+            });
+
+            if (!response.ok) {
+                alert('Failed to save Pay Band to database.');
+                return;
+            }
+        }
+
+        const addNewOpt = select.querySelector('option[value="NEW"]');
+
+        const newOpt = document.createElement('option');
+        newOpt.value = code;
+        newOpt.innerText = code;
+        select.insertBefore(newOpt, addNewOpt);
+
+        select.value = code;
+        fieldPreviousValues[select.id] = code;
+
+        if (isPayBand) {
+            payBandData[code] = {
+                min: parseInt(document.getElementById('minRateInput').value),
+                max: parseInt(document.getElementById('maxRateInput').value)
+            };
+        }
+
+        document.getElementById('fieldModal').style.display = 'none';
+        input.value = '';
+        document.getElementById('minRateInput').value = '';
+        document.getElementById('maxRateInput').value = '';
+    }
+
+    document.getElementById('hireForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/api/hire', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                const msgDiv = document.getElementById('message');
+                msgDiv.style.display = 'block';
+                if (result.status === 'success') {
+                    msgDiv.className = 'alert';
+                    msgDiv.innerText = `Success! Employee Created. PIDM: ${result.pidm}`;
+                    e.target.reset();
+                } else {
+                    msgDiv.className = 'alert error';
+                    msgDiv.innerText = `Error: ${result.message}`;
+                }
+            });
+    });
+</script>
+{% endblock %}

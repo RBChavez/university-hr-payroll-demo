@@ -1,0 +1,124 @@
+{% extends "index.html" %}
+
+{% block content %}
+<header>
+    <h1>University Service Portal</h1>
+    <p>Submit feedback, request reports, or open a ticket for IT support.</p>
+</header>
+
+<div class="card" style="max-width: 800px; margin-top: 20px;">
+    <form id="serviceForm" onsubmit="submitService(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label for="serviceType">Service Type</label>
+                <select id="serviceType" class="form-control" required
+                    style="width: 100%; padding: 10px; margin-top: 5px;">
+                    <option value="" disabled selected>Select a service...</option>
+                    <option value="Feedback">Submit Feedback</option>
+                    <option value="Report Request">Request for a Report</option>
+                    <option value="IT Ticket">Create IT Ticket</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority</label>
+                <select id="priority" class="form-control" style="width: 100%; padding: 10px; margin-top: 5px;">
+                    <option value="Low">Low</option>
+                    <option value="Normal" selected>Normal</option>
+                    <option value="High">High</option>
+                    <option value="Urgent">Urgent</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" placeholder="Brief summary of your request" required
+                style="width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+            <div class="form-group">
+                <label for="contact">Contact Email/Phone</label>
+                <input type="text" id="contact" placeholder="email@address.com or (555) 000-0000" required
+                    style="width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+                <label for="attachment">Attachment</label>
+                <input type="file" id="attachment"
+                    style="width: 100%; padding: 7px; margin-top: 5px; box-sizing: border-box; background: #f8fafc; border: 1px solid #ddd;">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="details">Details</label>
+            <textarea id="details" rows="6" placeholder="Please provide as much detail as possible..." required
+                style="width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; font-family: inherit;"></textarea>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+            <button type="submit" id="submitBtn" class="btn-primary" style="padding: 12px 30px;">Submit Request</button>
+        </div>
+    </form>
+
+    <div id="successMessage"
+        style="display: none; margin-top: 20px; padding: 20px; background: #ecfdf5; border: 1px solid #10b981; color: #065f46; border-radius: 4px; text-align: center;">
+        <h3 style="margin-top: 0;">Request Submitted!</h3>
+        <p>Your request has been recorded and the administration has been notified.</p>
+        <button class="btn-primary" onclick="resetForm()" style="margin-top: 10px; background: #10b981;">New
+            Request</button>
+    </div>
+</div>
+
+<script>
+    function submitService(event) {
+        event.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('serviceForm');
+
+        const formData = new FormData();
+        formData.append('type', document.getElementById('serviceType').value);
+        formData.append('priority', document.getElementById('priority').value);
+        formData.append('subject', document.getElementById('subject').value);
+        formData.append('details', document.getElementById('details').value);
+        formData.append('contact', document.getElementById('contact').value);
+
+        const fileInput = document.getElementById('attachment');
+        if (fileInput.files.length > 0) {
+            formData.append('attachment', fileInput.files[0]);
+        }
+
+        btn.disabled = true;
+        btn.innerText = 'Submitting...';
+
+        fetch('/api/service/submit', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    form.style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                } else {
+                    alert('Error: ' + data.message);
+                    btn.disabled = false;
+                    btn.innerText = 'Submit Request';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Submission failed. Please try again.');
+                btn.disabled = false;
+                btn.innerText = 'Submit Request';
+            });
+    }
+
+    function resetForm() {
+        document.getElementById('serviceForm').reset();
+        document.getElementById('serviceForm').style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').innerText = 'Submit Request';
+    }
+</script>
+{% endblock %}

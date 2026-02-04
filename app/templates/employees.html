@@ -1,0 +1,247 @@
+{% extends "index.html" %}
+
+{% block content %}
+<header>
+    <h1>Employee Directory</h1>
+    <p>View administrative status of all personnel.</p>
+</header>
+
+<div class="card" style="width: 100%; overflow-x: auto;">
+    <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search names, IDs, or departments..."
+            class="form-control"
+            style="flex: 1; min-width: 300px; padding: 12px; border: 1px solid #ddd; outline: none;">
+
+        <select id="statusFilter" onchange="filterTable()" style="width: auto; padding: 10px;">
+            <option value="">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Leave">Leave</option>
+            <option value="Terminated">Terminated</option>
+        </select>
+    </div>
+    <table class="data-table" id="empTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>ECLS</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Job Title</th>
+                <th>Hire Date</th>
+                <th>Classification</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Loc</th>
+                <th>Workplace</th>
+                <th>Band</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.id }}</td>
+                <td>{{ emp.last_name }}, {{ emp.first_name }}</td>
+                <td style="font-weight: bold;">{{ emp.ecls }}</td>
+                <td title="{{ depts.get(emp.department, 'Unknown Dept') }}">{{ emp.department }}</td>
+                <td>
+                    {% if emp.status == 'A' %}
+                    <span class="badge success">Active</span>
+                    {% elif emp.status == 'T' %}
+                    <span class="badge danger">Terminated</span>
+                    {% elif emp.status == 'L' %}
+                    <span class="badge warning">Leave</span>
+                    {% elif emp.status == 'P' %}
+                    <span class="badge info">Probation</span>
+                    {% else %}
+                    <span class="badge secondary">{{ emp.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ emp.job_title if emp.job_title else 'N/A' }}</td>
+                <td>{{ emp.hire_date }}</td>
+                <td>{{ emp.classification or '-' }}</td>
+                <td>{{ emp.category or '-' }}</td>
+                <td>{{ emp.job_type or '-' }}</td>
+                <td>{{ emp.location or '-' }}</td>
+                <td>{{ emp.workplace or '-' }}</td>
+                <td title="{{ rates.get(emp.pay_band, 'Rate Unavailable') }}">{{ emp.pay_band or '-' }}</td>
+                <td>
+                    <button class="btn-primary" style="padding: 5px 10px; font-size: 0.8em;" onclick='openEditModal({{ {
+                            "pidm": emp.id,
+                            "name": emp.first_name + " " + emp.last_name,
+                            "job_title": emp.job_title,
+                            "salary": emp.salary if emp.salary else 0,
+                            "classification": emp.classification,
+                            "category": emp.category,
+                            "job_type": emp.job_type,
+                            "location": emp.location,
+                            "workplace": emp.workplace,
+                            "pay_band": emp.pay_band
+                        } | tojson }})'>Edit</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Edit Modal Overlay -->
+<div id="editModal" class="modal-overlay"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+    <div class="modal-content"
+        style="background: white; padding: 30px; border-radius: 0; width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #ddd;">
+        <h2 id="editModalTitle" style="color: var(--gmu-green);">Edit Profile</h2>
+        <form id="editForm">
+            <input type="hidden" id="editPidm">
+            <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" id="editJobTitle" required>
+            </div>
+            <div class="form-group">
+                <label>Salary (Annual)</label>
+                <input type="number" id="editSalary" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                    <label>Workplace</label>
+                    <select id="editWorkplace">
+                        <option value="Remote">Remote</option>
+                        <option value="Hybrid">Hybrid</option>
+                        <option value="On-Site">On-Site</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Job Type</label>
+                    <select id="editJobType">
+                        <option value="Full-Time">Full-Time</option>
+                        <option value="Part-Time">Part-Time</option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn-primary" style="flex: 1;">Save Changes</button>
+                <button type="button" class="btn-secondary" onclick="closeEditModal()" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal(data) {
+        document.getElementById('editModalTitle').innerText = `Edit: ${data.name}`;
+        document.getElementById('editPidm').value = data.pidm;
+        document.getElementById('editJobTitle').value = data.job_title || '';
+        document.getElementById('editSalary').value = data.salary || 0;
+        document.getElementById('editWorkplace').value = data.workplace || 'On-Site';
+        document.getElementById('editJobType').value = data.job_type || 'Full-Time';
+
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    document.getElementById('editForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = {
+            pidm: document.getElementById('editPidm').value,
+            job_title: document.getElementById('editJobTitle').value,
+            salary: document.getElementById('editSalary').value,
+            workplace: document.getElementById('editWorkplace').value,
+            job_type: document.getElementById('editJobType').value,
+            // Keeping these same for now to avoid complexity in UI, but API supports it
+            classification: 'STAFF',
+            category: 'ADMIN',
+            location: 'FAIRFAX',
+            pay_band: 'BAND-1'
+        };
+
+        fetch('/api/employees/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(res => res.json()).then(res => {
+            if (res.status === 'success') {
+                location.reload();
+            } else {
+                alert('Error updating profile: ' + res.message);
+            }
+        });
+    });
+
+    function filterTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toUpperCase();
+        const table = document.getElementById("empTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let visible = false;
+            // Check all columns
+            const tds = tr[i].getElementsByTagName("td");
+            for (let j = 0; j < tds.length; j++) {
+                if (tds[j]) {
+                    const txtValue = tds[j].textContent || tds[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        visible = true;
+                        break;
+                    }
+                }
+            }
+            tr[i].style.display = visible ? "" : "none";
+        }
+    }
+</script>
+
+<style>
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .data-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #003366;
+    }
+
+    .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 500;
+        color: white;
+    }
+
+    .badge.success {
+        background-color: #28a745;
+    }
+
+    .badge.danger {
+        background-color: #dc3545;
+    }
+
+    .badge.warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .badge.info {
+        background-color: #17a2b8;
+    }
+
+    .badge.secondary {
+        background-color: #6c757d;
+    }
+</style>
+{% endblock %}

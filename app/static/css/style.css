@@ -1,0 +1,222 @@
+:root {
+    --gmu-green: #005239;
+    --gmu-gold: #FFC733;
+    --gmu-black: #333333;
+
+    --primary-color: var(--gmu-green);
+    --secondary-color: var(--gmu-gold);
+    --light-bg: #f8fafc;
+    --text-color: #1e293b;
+    --text-secondary: #64748b;
+    --bg-card: #ffffff;
+    --border-color: #dddddd;
+    --sidebar-width: 260px;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    background: #ffffff;
+    height: 100vh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-color);
+    border-right: 1px solid #ddd;
+}
+
+.welcome-user {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    /* Assuming --text-secondary is defined elsewhere or will be added */
+    margin-bottom: 30px;
+    padding-left: 5px;
+    font-weight: 500;
+}
+
+.app-footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.app-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}
+
+.brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 30px 20px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.brand span {
+    color: var(--secondary-color);
+    margin-left: 5px;
+}
+
+.nav-links a {
+    display: block;
+    color: var(--gmu-green);
+    text-decoration: none;
+    padding: 15px 20px;
+    border-radius: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #eee;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.nav-links a:hover {
+    background-color: var(--gmu-gold);
+    color: var(--gmu-green);
+    border-left: none;
+}
+
+.nav-links a.active {
+    background-color: var(--gmu-green);
+    color: white;
+    border-left: none;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+h1 {
+    color: var(--primary-color);
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 0;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-box {
+    background: white;
+    padding: 20px;
+    border-radius: 0;
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--secondary-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 0;
+}
+
+button.btn-primary {
+    background-color: var(--gmu-gold);
+    color: var(--gmu-green);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(255, 199, 51, 0.2);
+}
+
+button.btn-primary:hover {
+    background-color: #ffd666;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(255, 199, 51, 0.3);
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Utils */
+.alert {
+    padding: 15px;
+    background-color: #dff0d8;
+    color: #3c763d;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert.error {
+    background-color: #f2dede;
+    color: #a94442;
+}
