@@ -8,10 +8,6 @@ env/
 venv/
 ENV/
 
-# Database
-mock_banner.db
-mock_banner.db-journal
-
 # Logs
 *.log
 server_error.log
@@ -23,6 +19,10 @@ server_error.log
 # OS
 .DS_Store
 Thumbs.db
+
+# Database
+mock_banner.db
+mock_banner.db-journal
 
 # Project-specific
 uploads/
