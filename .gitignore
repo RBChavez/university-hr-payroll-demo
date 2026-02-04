@@ -21,7 +21,6 @@ server_error.log
 Thumbs.db
 
 # Database
-mock_banner.db
 mock_banner.db-journal
 
 # Project-specific
