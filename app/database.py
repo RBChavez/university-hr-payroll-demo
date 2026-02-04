@@ -2,8 +2,12 @@ import sqlite3
 import os
 import datetime
 
-# Database configuration for cloud deployment compatability
-DB_NAME = os.environ.get('DB_PATH', "mock_banner.db")
+# Determine base directory (the 'app' folder)
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Database configuration for cloud deployment compatibility
+# Default to 'mock_banner.db' in the project root (one level up from this file)
+DB_NAME = os.environ.get('DB_PATH', os.path.join(basedir, '..', "mock_banner.db"))
 
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
