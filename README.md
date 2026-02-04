@@ -27,8 +27,8 @@ graph TD
     Auth --> Schema
     Payroll_Pkg --> Schema
     
-    ExtSys[("Identity Mgmt System")] <.. Extract
-    BI_Tool[("BI / Analytics")] <.. Views
+    Extract -.-> ExtSys[("Identity Mgmt System")]
+    Views -.-> BI_Tool[("BI / Analytics")]
 ```
 
 ## Project Directory Structure
