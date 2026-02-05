@@ -56,7 +56,7 @@ def login_page():
             conn.commit()
             conn.close()
             
-            return redirect(url_for('index'))
+            return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', error="Invalid Credentials")
             
@@ -68,8 +68,12 @@ def logout():
     return redirect(url_for('login_page'))
 
 @app.route('/')
-@login_required
 def index():
+    return redirect(url_for('login_page'))
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
     return render_template('index.html')
 
 @app.route('/hire', methods=['GET'])

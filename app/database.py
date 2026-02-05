@@ -16,6 +16,11 @@ def get_db_connection():
 
 def init_db():
     """Buts up the mock Banner schema in SQLite"""
+    # Ensure the directory for the database exists
+    db_dir = os.path.dirname(os.path.abspath(DB_NAME))
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 

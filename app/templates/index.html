@@ -18,7 +18,7 @@
             Welcome, {{ session['user'] }}
         </div>
         <nav class="nav-links">
-            <a href="/" class="{{ 'active' if request.path == '/' else '' }}">Dashboard</a>
+            <a href="/dashboard" class="{{ 'active' if request.path == '/dashboard' else '' }}">Dashboard</a>
             <a href="/hire" class="{{ 'active' if request.path == '/hire' else '' }}">New Hire</a>
             <a href="/payroll" class="{{ 'active' if request.path == '/payroll' else '' }}">Payroll Run</a>
             <a href="/employees" class="{{ 'active' if request.path == '/employees' else '' }}">Employees</a>
