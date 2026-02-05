@@ -7,48 +7,21 @@ This project illustrates a backend solution for a University Human Resources and
 
 ```mermaid
 graph TD
-    subgraph "Global User Interface"
-        User((HR User))
+    User((HR User)) --> UI
+    
+    subgraph "User Interface Layer"
+        UI["HR & Payroll Portal\n(All Modules)"]
         Bot["Chatbot AI (Aom)"]
-        
-        subgraph "Portal Modules"
-            Dash["Dashboard"]
-            Hire["New Hire Portal"]
-            Pay["Payroll Runner"]
-            Emp["Employee Directory"]
-            Svc["Service Portal"]
-            Log["Audit Log"]
-        end
+        Bot -. "Assists & Guides" .-> UI
     end
-
-    subgraph "Application Layer (PL/SQL API)"
-        HR_Pkg["PKG_HR_MAINTENANCE"]
-        Payroll_Pkg["PKG_PAYROLL_CALC"]
-        Auth["Security Verification"]
+    
+    subgraph "Application & Data Layer"
+        Logic["PL/SQL Business Logic\n(HR & Payroll Processing)"]
+        DB[("Oracle Database\n(Mock Banner Schema)")]
     end
-
-    subgraph "Database Layer (Mock Banner)"
-        Schema[("Oracle Schema\n(SPRIDEN, PEBEMPL, NBRJOBS)")]
-    end
-
-    User --> Dash
-    User --> Bot
     
-    %% Bot Integration showing assistance across all pages
-    Bot -.-> Dash
-    Bot -.-> Hire
-    Bot -.-> Pay
-    Bot -.-> Emp
-    Bot -.-> Svc
-    Bot -.-> Log
-
-    Dash & Hire & Pay & Emp & Svc & Log -- "Flask / cx_Oracle" --> HR_Pkg
-    Dash & Hire & Pay & Emp & Svc & Log -- "Financial Logic" --> Payroll_Pkg
-    
-    HR_Pkg & Payroll_Pkg --> Auth
-    Auth --> Schema
-    
-    Schema -.-> Data["Extracts & Views"]
+    UI -- "Secure API Calls" --> Logic
+    Logic --> DB
 ```
 
 ## Project Directory Structure
