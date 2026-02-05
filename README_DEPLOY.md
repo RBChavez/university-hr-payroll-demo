@@ -50,3 +50,8 @@ By default, Render's disk is "ephemeral," meaning your database will reset every
 2.  Upload your files or clone from GitHub.
 3.  Configure a Web App using the "Manual Configuration" for Flask and Python 3.x.
 4.  Update the WSGI configuration file to point to your `app.py`.
+## Demo Mode Configuration
+This application is pre-configured for demonstration purposes:
+- **Streamlined Login**: 2FA fields are pre-filled and disabled to allow for a faster demo flow.
+- **Virtual Assistant**: The "Aom" chatbot provides guidance on the login page and handles restricted actions.
+- **Restricted Actions**: To prevent data corruption during public demos, "Process New Hire" and "Submit Request" buttons are currently set to "Notification Only" mode through the virtual assistant.

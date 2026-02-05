@@ -7,41 +7,50 @@ This project illustrates a backend solution for a University Human Resources and
 
 ```mermaid
 graph TD
-    subgraph "Database Layer (Oracle)"
-        Schema[("Mock Banner Schema\n(SPRIDEN, PEBEMPL, NBRJOBS)")]
+    subgraph "UI & Interactive Layer"
+        User((HR User))
+        Bot["Virtual Assistant (Aom)"]
+        Web["Web Portal (Flask/HTML)"]
     end
 
     subgraph "Application Layer (PL/SQL API)"
         HR_Pkg["PKG_HR_MAINTENANCE"]
         Payroll_Pkg["PKG_PAYROLL_CALC"]
-        Auth["Security / Validation"]
+        Auth["Security / Verification Logic"]
     end
 
-    subgraph "Integration Layer"
-        Extract["Active Emp Extract\n(PRC_EXTRACT_ACTIVE_EMPLOYEES)"]
-        Views["Reporting Views\n(HR_HEADCOUNT_V)"]
+    subgraph "Database Layer (Mock Banner)"
+        Schema[("Oracle Schema\n(SPRIDEN, PEBEMPL, NBRJOBS)")]
     end
 
-    User((HR User)) --> HR_Pkg
+    User --> Web
+    User --> Bot
+    Bot -- "Guidance" --> User
+    Web -- "Python/cx_Oracle" --> HR_Pkg
+    Web -- "Python/cx_Oracle" --> Payroll_Pkg
     HR_Pkg --> Auth
     Auth --> Schema
     Payroll_Pkg --> Schema
     
-    Extract -.-> ExtSys[("Identity Mgmt System")]
-    Views -.-> BI_Tool[("BI / Analytics")]
+    Schema -.-> Extract["Active Emp Extract"]
+    Schema -.-> Views["Reporting Views"]
 ```
 
 ## Project Directory Structure
 
 ```
 university-hr-payroll-demo/
+├── app/
+│   ├── static/            # CSS, JS, and UI Assets
+│   ├── templates/         # HTML Templates
+│   │   └── chatbot_widget.html # 🔥 Reusable AI Assistant Component
+│   └── app.py             # Flask Backend/Controller
 ├── database/
 │   ├── ddl/               # Schema definitions (Tables, Constraints)
-│   └── packages/          # PL/SQL Business Logic (Specifications & Bodies)
-├── integrations/          # Data extraction and interface scripts
-├── reporting/             
-│   └── views/             # Analytical views for HR/Payroll
-└──demo_runner.sql         # End-to-End Demo Simulation Script
+│   └── packages/          # PL/SQL Business Logic
+├── integrations/          # External Interface Scripts
+├── reporting/             # Analytical Views
+└── README_DEPLOY.md       # Cloud Deployment Guide
 ```
 
 ## Getting Started
@@ -93,10 +102,38 @@ For a visual demonstration of the system capabilities to business users (HR/Payr
 4.  Open your browser to: `http://localhost:5000`
 
 ### Web Features
-- **Dashboard**: High-level view of system status.
-- **New Hire Portal**: Graphical form to input `SPRIDEN` and `PEBEMPL` data.
-- **Payroll Runner**: "One-click" execution of the payroll batch process.
-- **Analytics**: Visualization of Headcount data.
+- **Interactive Dashboard**: A real-time command center providing high-level situational awareness:
+    - **Visual Analytics**: Interactive charts (powered by Chart.js) showing Headcount by Department, Workforce Type, and Salary Distribution.
+    - **Live KPIs**: Instant totals for active headcount, estimated annual payroll expense, and key upcoming dates.
+- **New Hire Portal**: Graphical form to input `SPRIDEN` (Identity) and `PEBEMPL` (Employment) data directly into the mock-Banner ecosystem.
+- **Payroll Runner**: "One-click" execution of the `PKG_PAYROLL_CALC` batch process, simulating enterprise-grade financial calculations.
+- **Employee Management**: An administrative directory for personnel oversight:
+    - **Advanced Search**: Real-time filtering by name, ID, or department.
+    - **Dynamic Actions**: Ability to update employee profiles (Job Title, Salary, Classification) via a secure interface.
+    - **Status Tracking**: Visual indicators for employment status (Active, Leave, Terminated).
+- **Service Portal**: A centralized hub for administrative and technical support:
+    - **Request Routing**: Categorized intake for IT tickets, report requests, and staff feedback.
+    - **Priority Management**: Integrated urgency scaling (Urgent to Low) for workload prioritization.
+    - **Asset Linkage**: Support for file attachments to streamline issue resolution.
+- **System Audit Log**: Enhanced oversight for security and compliance:
+    - **Activity Tracking**: Comprehensive logging of administrative actions and system events.
+    - **Security Forensics**: Capture of metadata including performer ID, IP addresses, and detailed action descriptions.
+    - **Entity Context**: Direct linkage between audit events and specific employee records (PIDMs).
+- **Virtual Assistant (Aom)**: AI-powered chatbot widget providing contextual help, credentials guidance, and interactive demo boundaries.
+- **Enterprise Login Portal**: A secure, Banner-themed authentication entry point:
+    - **Multi-Step Verification**: Integrated 2FA system simulating enterprise identity management.
+    - **Demo Optimization**: Streamlined authentication flow with pre-filled verification fields for frictionless presentation.
+    - **Assisted Onboarding**: Contextual guidance from the Virtual Assistant (Aom) to ensure immediate access during demo sessions.
+
+### Virtual Assistant (Aom) Technical Specs
+The chatbot is designed as a modular **JS/HTML Widget**:
+- **Persistence**: Reusable component via `{% include 'chatbot_widget.html' %}`.
+- **Interactive Triggers**: Programmatically controlled via `addBotMessage()`, allowing system events (like clicking a disabled button) to trigger natural language responses.
+- **Zero-Backend Dependency**: Currently runs on client-side logic for demo speed, with easy hooks for LLM/OpenAI integration.
+
+### Demo Notes
+- **Process Restrictions**: Buttons like "Process New Hire" and "Submit Request" are restricted in the demo environment to preserve system integrity. Interactions with these elements trigger a notification from Aom.
+- **Auto-Assistant**: The virtual assistant "Aom" automatically opens on the login page to assist with the initial sign-in process.
 
 ## License
 MIT License - Educational Demo

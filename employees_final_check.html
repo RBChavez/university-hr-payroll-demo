@@ -300,7 +300,6 @@
         User Guide:
         <span>User: aomchavez</span>
         <span>Pass: admin</span>
-        <span>Code: 123456</span>
     </div>
 
     <div class="login-card">
@@ -309,7 +308,7 @@
             <p>HR & Payroll Portal</p>
         </div>
 
-        
+
 
         <form id="loginForm" method="POST" action="/login" onsubmit="handleLoginSubmit(event)">
             <div class="form-group">
@@ -342,7 +341,8 @@
                     <h2>Verify Identity</h2>
                     <p>We'll send a verification code to your registered email or phone number.</p>
                     <div class="form-group">
-                        <input type="text" id="contactInput" placeholder="Email or Phone number" required>
+                        <input type="text" id="contactInput" placeholder="Email or Phone number" value="test@test.com"
+                            disabled required>
                     </div>
                     <button type="button" class="btn-modal" onclick="showStep2()">Send the code</button>
                 </div>
@@ -352,7 +352,8 @@
                     <h2>Security Check</h2>
                     <p>Please enter the 6-digit code sent to your device.</p>
                     <div class="form-group">
-                        <input type="text" id="codeInput" class="input-code" placeholder="••••••" maxlength="6">
+                        <input type="text" id="codeInput" class="input-code" placeholder="••••••" value="123456"
+                            disabled maxlength="6">
                     </div>
                     <button type="button" class="btn-modal" onclick="verifyTFA()">Submit & Login</button>
                     <button type="button"

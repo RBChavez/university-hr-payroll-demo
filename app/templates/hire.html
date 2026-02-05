@@ -208,7 +208,9 @@
             </div>
         </div>
 
-        <button type="submit" class="btn-primary">Process New Hire</button>
+        <button type="button" class="btn-primary"
+            onclick="addBotMessage('The Process New Hire button has been disabled for the Demo purpose only. Thanks for visiting this page.')">Process
+            New Hire</button>
     </form>
 </div>
 
@@ -224,7 +226,7 @@
     let fieldPreviousValues = {};
     let payBandData = {
         {% for pb in pay_bands %}
-    "{{ pb.code }}": { min: {{ pb.min }}, max: {{ pb.max }} },
+    "{{ pb.code }}": { min: { { pb.min } }, max: { { pb.max } } },
     {% endfor %}
     };
 
