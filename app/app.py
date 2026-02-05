@@ -432,6 +432,7 @@ def api_run_payroll():
         conn.close()
 
 @app.route('/api/payroll/dates', methods=['GET'])
+@login_required
 def api_payroll_dates():
     conn = database.get_db_connection()
     cursor = conn.cursor()
@@ -440,6 +441,7 @@ def api_payroll_dates():
     return jsonify([row[0] for row in dates])
 
 @app.route('/api/stats', methods=['GET'])
+@login_required
 def api_stats():
     conn = database.get_db_connection()
     cursor = conn.cursor()
