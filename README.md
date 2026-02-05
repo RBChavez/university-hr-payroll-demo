@@ -9,7 +9,7 @@ This project illustrates a backend solution for a University Human Resources and
 graph TD
     subgraph "UI & Interactive Layer"
         User((HR User))
-        Bot["Virtual Assistant (Aom)"]
+        Bot["Chatbot AI (Aom)"]
         Web["Web Portal (Flask/HTML)"]
     end
 
@@ -25,15 +25,16 @@ graph TD
 
     User --> Web
     User --> Bot
-    Bot -- "Guidance" --> User
-    Web -- "Python/cx_Oracle" --> HR_Pkg
-    Web -- "Python/cx_Oracle" --> Payroll_Pkg
+    Web <--> Bot
+    Bot -- "Guidance & Context" --> User
+    Web -- "Business Logic Calls" --> HR_Pkg
+    Web -- "Payroll Process" --> Payroll_Pkg
     HR_Pkg --> Auth
     Auth --> Schema
     Payroll_Pkg --> Schema
     
-    Schema -.-> Extract["Active Emp Extract"]
-    Schema -.-> Views["Reporting Views"]
+    Schema -.-> Extract["Data Extracts"]
+    Schema -.-> Views["Analytical Views"]
 ```
 
 ## Project Directory Structure
